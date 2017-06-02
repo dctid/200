@@ -1,0 +1,12 @@
+.DS_Store
+.gradle/
+.idea/
+.idea/gradle.xml
+.idea/modules/accountMgrAlexa.iml
+build/
+gradle/
+classes/
+node_modules/
+**/.project
+**/.classpath
+**/.settings

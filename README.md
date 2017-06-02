@@ -1,0 +1,3 @@
+This is a simple Spring Boot app that always returns Http Status OK (200). The URL, protocol or variables should not matter. This is the solution to all that ails you. All user stories, tickets, use cases, etc. are done today. It always returns success!
+
+To build this project you must have Java 8 on your path. Then clone this repo then navigate to the cloned directory and run `gradlew build` on Windows CMD or `./gradlew build` in terminal on MacOS and Linux. If this doesn't work you may need to install gradle from https://gradle.org/releases. Next run gradle wrapper in the cloned directory and finally the original `gradlew build` or `./gradlew build`.
