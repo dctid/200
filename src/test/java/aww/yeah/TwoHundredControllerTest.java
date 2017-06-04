@@ -1,22 +1,23 @@
 package aww.yeah;
 
+import com.jayway.restassured.RestAssured;
+import com.jayway.restassured.response.Response;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.embedded.EmbeddedWebApplicationContext;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static java.util.Arrays.asList;
+import static com.jayway.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
@@ -27,19 +28,31 @@ public class TwoHundredControllerTest {
             .mapToObj(c ->  "" + (char)(c + 32) + (char) c).collect(Collectors.joining()).toCharArray();
 
     @Autowired
-    private TestRestTemplate restTemplate;
+    private EmbeddedWebApplicationContext webAppConfiguration;
 
     private final Random random = new Random();
 
+    @Before
+    public void setUp() throws Exception {
+        RestAssured.port = webAppConfiguration.getEmbeddedServletContainer().getPort();
+    }
+
     @Test
     public void twoHundredApplication_shouldRespondToRandomGetRequests_withStatusOk() throws Exception {
-
         for(int i=0; i<20;i++) {
-            String randomPath = genRandomString();
-            ResponseEntity<String> response = this.restTemplate.getForEntity("/" + randomPath, String.class, "pa");
 
-            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-            assertThat(response.getBody()).isEqualTo("{\"success\":\"Aww Yeah\"}");
+            Response response = given()
+                    .get(genRandomString())
+                    .thenReturn();
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK.value());
+
+            if(MediaType.APPLICATION_JSON_VALUE.equals(response.getContentType())) {
+                assertThat(response.getBody().asString()).isEqualTo("{\"success\":\"Aww Yeah\"}");
+            } else {
+                assertThat(response.getBody().asInputStream())
+                        .hasSameContentAs(new InputStreamResource(ClassLoader.getSystemResourceAsStream("aww_yeah.gif")).getInputStream());
+            }
         }
     }
 
@@ -47,11 +60,19 @@ public class TwoHundredControllerTest {
     public void twoHundredApplication_shouldRespondToRandomGetRequestsWithUriVars_withStatusOk() throws Exception {
 
         for(int i=0; i<20;i++) {
-            String randomPath = genRandomString();
-            ResponseEntity<String> response = this.restTemplate.getForEntity("/" + randomPath + "?param1={param1}&param2={param2}", String.class, genRandomString(), genRandomString());
+            Response response = given()
+                    .param(genRandomString(), genRandomString())
+                    .param(genRandomString(), genRandomString())
+                    .get(genRandomString())
+                    .thenReturn();
 
-            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-            assertThat(response.getBody()).isEqualTo("{\"success\":\"Aww Yeah\"}");
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK.value());
+            if(MediaType.APPLICATION_JSON_VALUE.equals(response.getContentType())) {
+                assertThat(response.getBody().asString()).isEqualTo("{\"success\":\"Aww Yeah\"}");
+            } else {
+                assertThat(response.getBody().asInputStream())
+                        .hasSameContentAs(new InputStreamResource(ClassLoader.getSystemResourceAsStream("aww_yeah.gif")).getInputStream());
+            }
         }
     }
 
@@ -59,11 +80,20 @@ public class TwoHundredControllerTest {
     public void twoHundredApplication_shouldRespondToRandomPostWithUriVarRequests_withStatusOk() throws Exception {
 
         for(int i=0; i<20;i++) {
-            String randomPath = genRandomString();
-            ResponseEntity<String> response = this.restTemplate.postForEntity("/" + randomPath + "?param1={param1}&param2={param2}",null, String.class, genRandomString(), genRandomString());
 
-            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-            assertThat(response.getBody()).isEqualTo("{\"success\":\"Aww Yeah\"}");
+            Response response = given()
+                    .queryParam(genRandomString(), genRandomString())
+                    .queryParam(genRandomString(), genRandomString())
+                    .post(genRandomString())
+                    .thenReturn();
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK.value());
+            if(MediaType.APPLICATION_JSON_VALUE.equals(response.getContentType())) {
+                assertThat(response.getBody().asString()).isEqualTo("{\"success\":\"Aww Yeah\"}");
+            } else {
+                assertThat(response.getBody().asInputStream())
+                        .hasSameContentAs(new InputStreamResource(ClassLoader.getSystemResourceAsStream("aww_yeah.gif")).getInputStream());
+            }
         }
     }
 
@@ -71,15 +101,20 @@ public class TwoHundredControllerTest {
     public void twoHundredApplication_shouldRespondToRandomPostWithFormDataRequests_withStatusOk() throws Exception {
 
         for(int i=0; i<20;i++) {
-            String randomPath = genRandomString();
-            MultiValueMap<String, String> requestParams = new LinkedMultiValueMap<String, String>(){{
-               put(genRandomString(), asList(genRandomString()));
-               put(genRandomString(), asList(genRandomString()));
-            }};
-            ResponseEntity<String> response = this.restTemplate.postForEntity("/" + randomPath, requestParams, String.class);
 
-            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-            assertThat(response.getBody()).isEqualTo("{\"success\":\"Aww Yeah\"}");
+            Response response = given()
+                    .formParam(genRandomString(), genRandomString())
+                    .formParam(genRandomString(), genRandomString())
+                    .post(genRandomString())
+                    .thenReturn();
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK.value());
+            if(MediaType.APPLICATION_JSON_VALUE.equals(response.getContentType())) {
+                assertThat(response.getBody().asString()).isEqualTo("{\"success\":\"Aww Yeah\"}");
+            } else {
+                assertThat(response.getBody().asInputStream())
+                        .hasSameContentAs(new InputStreamResource(ClassLoader.getSystemResourceAsStream("aww_yeah.gif")).getInputStream());
+            }
         }
     }
 
@@ -90,7 +125,4 @@ public class TwoHundredControllerTest {
         }
         return builder.toString();
     }
-
-
-
 }
