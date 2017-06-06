@@ -2,11 +2,9 @@ package aww.yeah;
 
 import org.springframework.boot.autoconfigure.web.ErrorController;
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Random;
@@ -20,11 +18,10 @@ public class TwoHundredController implements ErrorController {
         this.random = random;
     }
 
-    @RequestMapping(value = "/error")
-    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping("/error")
     public ResponseEntity respondToAnything(){
 
-        if(random.nextInt(5) == 4){
+        if(random.nextInt(5) == 0){
             return ResponseEntity.ok()
                     .contentType(MediaType.IMAGE_GIF)
                     .body(new InputStreamResource(ClassLoader.getSystemResourceAsStream("aww_yeah.gif")));
@@ -36,6 +33,6 @@ public class TwoHundredController implements ErrorController {
 
     @Override
     public String getErrorPath() {
-        return null;
+        return "/error";
     }
 }
