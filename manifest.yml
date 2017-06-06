@@ -1,0 +1,7 @@
+---
+applications:
+- name: mvp-for-all
+  memory: 256M
+  instances: 1
+  host: mvp-for-all
+  path: build/libs/two-hundred-rest-service-0.1.0.jar
