@@ -2,16 +2,13 @@ package aww.yeah;
 
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.response.Response;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.embedded.EmbeddedWebApplicationContext;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -20,21 +17,20 @@ import java.util.stream.IntStream;
 import static com.jayway.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class TwoHundredControllerIntegrationTest {
 
     private final static char[] CHARS = IntStream.rangeClosed('A', 'Z')
             .mapToObj(c ->  "" + (char)(c + 32) + (char) c).collect(Collectors.joining()).toCharArray();
 
-    @Autowired
-    private EmbeddedWebApplicationContext webAppConfiguration;
+    @LocalServerPort
+    private int port;
 
     private final Random random = new Random();
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        RestAssured.port = webAppConfiguration.getEmbeddedServletContainer().getPort();
+        RestAssured.port = port;
     }
 
     @Test

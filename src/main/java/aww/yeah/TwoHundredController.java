@@ -1,6 +1,6 @@
 package aww.yeah;
 
-import org.springframework.boot.autoconfigure.web.ErrorController;
+import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -39,7 +39,6 @@ public class TwoHundredController implements ErrorController {
                 .body("{\"success\":\"Aww Yeah\"}");
     }
 
-    @Override
     public String getErrorPath() {
         return "/error";
     }

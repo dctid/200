@@ -1,38 +1,28 @@
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.3.RELEASE")
-    }
+plugins {
+    id 'org.springframework.boot' version '2.5.0-M3'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
 }
 
-apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'idea'
-apply plugin: 'spring-boot'
 
 group 'AwwYeah'
 version '1.0-SNAPSHOT'
-
-jar {
-    baseName = 'two-hundred-rest-service'
-    version =  '0.1.0'
-}
+sourceCompatibility = '11'
 
 repositories {
     mavenCentral()
+    maven { url 'https://repo.spring.io/milestone' }
 }
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
-    compile("org.springframework.boot:spring-boot-starter-web")
-    testCompile('org.springframework.boot:spring-boot-starter-test')
-    testCompile 'com.jayway.restassured:rest-assured:2.9.0'
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    testImplementation('org.springframework.boot:spring-boot-starter-test')
+    testImplementation 'com.jayway.restassured:rest-assured:2.9.0'
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '3.5'
+test {
+    useJUnitPlatform()
 }

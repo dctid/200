@@ -1,10 +1,11 @@
 package aww.yeah;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class TwoHundredControllerTest {
 
     private TwoHundredController twoHundredController;
@@ -23,13 +24,13 @@ public class TwoHundredControllerTest {
     @Mock
     private Random random;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         twoHundredController = new TwoHundredController(random);
     }
 
     @Test
-    public void respondToAnything_shouldReturnJson_whenRandomIsNotZero() throws Exception {
+    void respondToAnything_shouldReturnJson_whenRandomIsNotZero() throws Exception {
         when(random.nextInt(anyInt())).thenReturn(1);
         ResponseEntity responseEntity = twoHundredController.respondToAnything();
 
@@ -38,7 +39,7 @@ public class TwoHundredControllerTest {
     }
 
     @Test
-    public void respondToAnything_shouldReturnGif_whenRandomIsZero() throws Exception {
+    void respondToAnything_shouldReturnGif_whenRandomIsZero() throws Exception {
         when(random.nextInt(anyInt())).thenReturn(0);
         ResponseEntity responseEntity = twoHundredController.respondToAnything();
 
@@ -48,7 +49,9 @@ public class TwoHundredControllerTest {
     }
 
     @Test
-    public void getErrorPath_shouldReturn_slashError() throws Exception {
+    void getErrorPath_shouldReturn_slashError() throws Exception {
         assertThat(twoHundredController.getErrorPath()).isEqualTo("/error");
     }
+
+
 }
