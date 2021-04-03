@@ -10,6 +10,7 @@ import org.mockito.Mockito.`when`
 import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.core.io.InputStreamResource
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import java.util.*
 
 @ExtendWith(MockitoExtension::class)
@@ -29,6 +30,7 @@ class TwoHundredControllerTest {
             val responseEntity = twoHundredController.respondToAnything()
 
             assertThat(responseEntity.statusCode).isEqualTo(HttpStatus.OK)
+            assertThat(responseEntity.headers.contentType).isEqualTo(MediaType.APPLICATION_JSON)
             assertThat(responseEntity.body.toString()).isEqualTo(Success().toString())
         }
     }
@@ -40,7 +42,9 @@ class TwoHundredControllerTest {
         val responseEntity = twoHundredController.respondToAnything()
 
         assertThat(responseEntity.statusCode).isEqualTo(HttpStatus.OK)
+        assertThat(responseEntity.headers.contentType).isEqualTo(MediaType.IMAGE_GIF)
         assertThat((responseEntity.body as InputStreamResource?)!!.inputStream)
                 .hasSameContentAs(InputStreamResource(ClassLoader.getSystemResourceAsStream("aww_yeah.gif")!!).inputStream)
     }
+
 }

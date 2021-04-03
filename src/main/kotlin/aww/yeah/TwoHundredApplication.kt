@@ -17,6 +17,5 @@ fun main(args: Array<String>) {
 @Configuration
 class TwoHundredConfig {
     @Bean
-    fun random(): Random
-        = Random()
+    fun random(): Random = Random()
 }
