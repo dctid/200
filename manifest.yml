@@ -4,4 +4,4 @@ applications:
   memory: 256M
   instances: 1
   host: mvp-for-all
-  path: build/libs/two-hundred-rest-service-0.1.0.jar
+  path: build/libs/200-0.0.1-SNAPSHOT.jar
