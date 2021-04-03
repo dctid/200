@@ -1,133 +1,164 @@
 package aww.yeah
 
 import com.jayway.restassured.RestAssured
-import org.assertj.core.api.Assertions
+import com.jayway.restassured.http.ContentType
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
+import org.mockito.ArgumentMatchers
+import org.mockito.Mockito.`when`
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.web.client.TestRestTemplate
+import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.core.io.InputStreamResource
 import org.springframework.http.HttpStatus
-import org.springframework.http.MediaType
-import java.io.ByteArrayInputStream
+import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.util.*
-import java.util.stream.Collectors
-import java.util.stream.IntStream
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class TwoHundredControllerIntegrationTest {
     @LocalServerPort
     private val port = 0
 
-    @Autowired
-    private val restTemplate: TestRestTemplate? = null
-    private val random = Random()
+    @MockBean
+    private lateinit var randomBean: Random
+
+    private val randomStringGenerator: Random = Random()
 
     @BeforeEach
     fun setUp() {
         RestAssured.port = port
     }
 
+    private val awwYeahGif = ClassLoader.getSystemResourceAsStream("aww_yeah.gif")
+
+    private val responseBody = """{"success":"Aww Yeah"}"""
+
     @Test
-    @Throws(Exception::class)
-    fun old_twoHundredApplication_shouldRespondToRandomGetRequests_withStatusOk() {
-        for (i in 0..19) {
+    fun `two hundred application should respond to random GET requests with status 200 Ok`() {
+        for (i in 1..4) {
+            `when`(randomBean.nextInt(ArgumentMatchers.anyInt())).thenReturn(i)
+
             val response = RestAssured.given()[genRandomString()]
-                    .thenReturn()
-            Assertions.assertThat(response.statusCode).isEqualTo(HttpStatus.OK.value())
-            if (MediaType.APPLICATION_JSON_VALUE == response.contentType) {
-                Assertions.assertThat(response.body.asString()).isEqualTo("{\"success\":\"Aww Yeah\"}")
-            } else {
-                Assertions.assertThat(response.body.asInputStream())
-                        .hasSameContentAs(InputStreamResource(ClassLoader.getSystemResourceAsStream("aww_yeah.gif")).inputStream)
-            }
+                    .then()
+                    .statusCode(HttpStatus.OK.value())
+                    .and()
+                    .contentType(ContentType.JSON)
+                    .and()
+                    .extract().response().asString()
+
+
+            assertThat(response).isEqualTo(responseBody)
+
         }
     }
 
     @Test
-    @Throws(Exception::class)
-    fun twoHundredApplication_shouldRespondToRandomGetRequests_withStatusOk() {
-        for (i in 0..19) {
-            val response = restTemplate!!.getForEntity("http://localhost:" + port + "/" + genRandomString(),
-                    ByteArray::class.java)
-            Assertions.assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
-            if (MediaType.APPLICATION_JSON == response.headers.contentType) {
-                Assertions.assertThat(String(response.body!!, StandardCharsets.UTF_8)).isEqualTo("{\"success\":\"Aww Yeah\"}")
-            } else {
-                Assertions.assertThat(ByteArrayInputStream(response.body))
-                        .hasSameContentAs(InputStreamResource(ClassLoader.getSystemResourceAsStream("aww_yeah.gif")).inputStream)
-            }
-        }
+    fun `two hundred application should respond to random GET requests with status 200 Ok and GIF if random is 0`() {
+        `when`(randomBean.nextInt(ArgumentMatchers.anyInt())).thenReturn(0)
+
+        val response = RestAssured.given()[genRandomString()]
+                .then()
+                .statusCode(HttpStatus.OK.value())
+                .and()
+                .contentType("image/gif")
+                .and()
+                .extract().response().asInputStream()
+
+        assertThat(response)
+                .hasSameContentAs(InputStreamResource(awwYeahGif).inputStream)
+
     }
 
     @Test
-    @Throws(Exception::class)
-    fun twoHundredApplication_shouldRespondToRandomGetRequestsWithUriVars_withStatusOk() {
-        for (i in 0..19) {
+    fun `two hundred application should respond to random GET requests that have random query params with status 200 Ok`() {
+        for (i in 1..4) {
+            `when`(randomBean.nextInt(ArgumentMatchers.anyInt())).thenReturn(i)
+
             val response = RestAssured.given()
                     .param(genRandomString(), genRandomString())
                     .param(genRandomString(), genRandomString())[genRandomString()]
-                    .thenReturn()
-            Assertions.assertThat(response.statusCode).isEqualTo(HttpStatus.OK.value())
-            if (MediaType.APPLICATION_JSON_VALUE == response.contentType) {
-                Assertions.assertThat(response.body.asString()).isEqualTo("{\"success\":\"Aww Yeah\"}")
-            } else {
-                Assertions.assertThat(response.body.asInputStream())
-                        .hasSameContentAs(InputStreamResource(ClassLoader.getSystemResourceAsStream("aww_yeah.gif")).inputStream)
-            }
+                    .then()
+                    .statusCode(HttpStatus.OK.value())
+                    .and()
+                    .contentType(ContentType.JSON)
+                    .and()
+                    .extract().response().asString()
+
+
+            assertThat(response).isEqualTo(responseBody)
         }
     }
 
+
     @Test
-    @Throws(Exception::class)
-    fun twoHundredApplication_shouldRespondToRandomPostWithUriVarRequests_withStatusOk() {
-        for (i in 0..19) {
-            val response = RestAssured.given()
-                    .queryParam(genRandomString(), genRandomString())
-                    .queryParam(genRandomString(), genRandomString())
-                    .post(genRandomString())
-                    .thenReturn()
-            Assertions.assertThat(response.statusCode).isEqualTo(HttpStatus.OK.value())
-            if (MediaType.APPLICATION_JSON_VALUE == response.contentType) {
-                Assertions.assertThat(response.body.asString()).isEqualTo("{\"success\":\"Aww Yeah\"}")
-            } else {
-                Assertions.assertThat(response.body.asInputStream())
-                        .hasSameContentAs(InputStreamResource(ClassLoader.getSystemResourceAsStream("aww_yeah.gif")).inputStream)
-            }
-        }
+    fun `two hundred application should respond to random GET requests that have random query params with status 200 Ok and GIF if random is 0`() {
+        `when`(randomBean.nextInt(ArgumentMatchers.anyInt())).thenReturn(0)
+
+        val response = RestAssured.given()
+                .queryParam(genRandomString(), genRandomString())
+                .queryParam(genRandomString(), genRandomString())
+                .post(genRandomString())
+                .then()
+                .statusCode(HttpStatus.OK.value())
+                .and()
+                .contentType("image/gif")
+                .and()
+                .extract().response().asInputStream()
+
+        assertThat(response)
+                .hasSameContentAs(InputStreamResource(awwYeahGif).inputStream)
+
     }
 
     @Test
-    @Throws(Exception::class)
-    fun twoHundredApplication_shouldRespondToRandomPostWithFormDataRequests_withStatusOk() {
-        for (i in 0..19) {
+    fun `two hundred application should respond to random POST requests that have random form params with status 200 Ok`() {
+        for (i in 1..4) {
+            `when`(randomBean.nextInt(ArgumentMatchers.anyInt())).thenReturn(i)
             val response = RestAssured.given()
                     .formParam(genRandomString(), genRandomString())
                     .formParam(genRandomString(), genRandomString())
                     .post(genRandomString())
-                    .thenReturn()
-            Assertions.assertThat(response.statusCode).isEqualTo(HttpStatus.OK.value())
-            if (MediaType.APPLICATION_JSON_VALUE == response.contentType) {
-                Assertions.assertThat(response.body.asString()).isEqualTo("{\"success\":\"Aww Yeah\"}")
-            } else {
-                Assertions.assertThat(response.body.asInputStream())
-                        .hasSameContentAs(InputStreamResource(ClassLoader.getSystemResourceAsStream("aww_yeah.gif")).inputStream)
-            }
+                    .then()
+                    .statusCode(HttpStatus.OK.value())
+                    .and()
+                    .contentType(ContentType.JSON)
+                    .and()
+                    .extract().response().asString()
+
+            assertThat(response).isEqualTo(responseBody)
         }
     }
 
-    private fun genRandomString(): String {
-        val builder = StringBuilder()
-        for (i in 0 until random.nextInt(15) + 5) {
-            builder.append(chars[random.nextInt(chars.size)])
-        }
-        return builder.toString()
+    @Test
+    fun `two hundred application should respond to random POST requests that have random form params with status 200 Ok and GIF if random is 0`() {
+        `when`(randomBean.nextInt(ArgumentMatchers.anyInt())).thenReturn(0)
+
+        val response = RestAssured.given()
+                .formParam(genRandomString(), genRandomString())
+                .formParam(genRandomString(), genRandomString())
+                .post(genRandomString())
+                .then()
+                .statusCode(HttpStatus.OK.value())
+                .and()
+                .contentType("image/gif")
+                .and()
+                .extract().response().asInputStream()
+
+        assertThat(response)
+                .hasSameContentAs(InputStreamResource(awwYeahGif).inputStream)
     }
 
+    private fun genRandomString(): String =
+        IntRange(0, randomStringGenerator.nextInt(15) + 5)
+                .map { chars[randomStringGenerator.nextInt(chars.size)] }
+                .joinToString(separator = "")
+                .let { URLEncoder.encode(it, StandardCharsets.UTF_8.toString()) }
 
-    private val chars = IntStream.rangeClosed('A'.toInt(), 'Z'.toInt())
-            .mapToObj { c: Int -> "" + (c + 32).toChar() + c.toChar() }.collect(Collectors.joining()).toCharArray()
+
+    private val chars =
+            CharRange('!', '~')
+                    .joinToString(separator = "")
+                    .toCharArray()
 }
