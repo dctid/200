@@ -2,8 +2,7 @@ package aww.yeah
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
+import org.springframework.stereotype.Service
 import java.util.Random
 
 @SpringBootApplication
@@ -13,9 +12,9 @@ fun main(args: Array<String>) {
     runApplication<TwoHundredApplication>(*args)
 }
 
+@Service
+class ShowRandomGif(private val random: Random = Random()): () -> Boolean {
+    override fun invoke(): Boolean =
+            random.nextInt(5) == 0
 
-@Configuration
-class TwoHundredConfig {
-    @Bean
-    fun random(): Random = Random()
 }

@@ -8,7 +8,6 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import java.util.*
 
 data class Success(val success: String = "Aww Yeah")
 
@@ -25,13 +24,13 @@ private fun gifResponse(): ResponseEntity<InputStreamSource> =
                 .body(InputStreamResource(gif.inputStream))
 
 @RestController
-class TwoHundredController(private val random: Random) : ErrorController {
+class TwoHundredController(private val showRandomGif: () -> Boolean) : ErrorController {
 
     @RequestMapping("/error")
     fun respondToAnything(): ResponseEntity<*> =
-            when (random.nextInt(5)) {
-                0 -> gifResponse()
-                else -> defaultResponse
+            when (showRandomGif()) {
+                true -> gifResponse()
+                false -> defaultResponse
             }
 }
 
