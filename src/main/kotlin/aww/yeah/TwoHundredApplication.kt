@@ -11,10 +11,3 @@ class TwoHundredApplication
 fun main(args: Array<String>) {
     runApplication<TwoHundredApplication>(*args)
 }
-
-@Service
-class ShowRandomGif(private val random: Random = Random()): () -> Boolean {
-    override fun invoke(): Boolean =
-            random.nextInt(5) == 0
-
-}

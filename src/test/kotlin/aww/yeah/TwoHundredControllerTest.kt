@@ -7,12 +7,14 @@ import org.springframework.core.io.InputStreamSource
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 
-class TwoHundredControllerTest {
+internal class TwoHundredControllerTest {
 
     @Test
-    fun `respondToAnything() should return json when show gif is false`() {
+    internal fun `respondToAnything() should return json when show gif is false`() {
 
-        val responseEntity = TwoHundredController { false }.respondToAnything()
+        val twoHundredController = TwoHundredController { false }
+
+        val responseEntity = twoHundredController.respondToAnything()
 
         assertThat(responseEntity.statusCode).isEqualTo(HttpStatus.OK)
         assertThat(responseEntity.headers.contentType).isEqualTo(MediaType.APPLICATION_JSON)
@@ -20,9 +22,11 @@ class TwoHundredControllerTest {
     }
 
     @Test
-    fun `respondToAnything() should return gif when show gif is true`() {
+    internal fun `respondToAnything() should return gif when show gif is true`() {
 
-        val responseEntity = TwoHundredController { true }.respondToAnything()
+        val twoHundredController = TwoHundredController { true }
+
+        val responseEntity = twoHundredController.respondToAnything()
 
         assertThat(responseEntity.statusCode).isEqualTo(HttpStatus.OK)
         assertThat(responseEntity.headers.contentType).isEqualTo(MediaType.IMAGE_GIF)
@@ -32,5 +36,5 @@ class TwoHundredControllerTest {
                                 ClassLoader.getSystemResourceAsStream("aww_yeah.gif")!!)
                                 .inputStream)
     }
-
 }
+

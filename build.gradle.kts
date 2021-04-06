@@ -23,6 +23,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("com.jayway.restassured:rest-assured:2.9.0")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:3.1.0")
 }
 
 tasks.withType<KotlinCompile> {

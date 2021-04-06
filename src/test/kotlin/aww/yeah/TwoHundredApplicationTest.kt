@@ -4,8 +4,8 @@ import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
-class TwoHundredApplicationTest {
+internal class TwoHundredApplicationTest {
     @Test
-    fun contextLoads() {
+    internal fun contextLoads() {
     }
 }
